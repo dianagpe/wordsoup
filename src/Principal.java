@@ -17,17 +17,19 @@ public class Principal {
         DashboardGen dg = DashboardGen.getInstance();
 
         List<String> words = new ArrayList<String>();
-        words.add("murcielago");
-        words.add("caballero");
-        words.add("batimovil");
-        words.add("bruce");
-        words.add("noche");
-        words.add("alfred");
+        words.add("MURCIELAGO");
+        words.add("CABALLERO");
+        words.add("BATIMOVIL");
+        words.add("BRUCE");
+        words.add("NOCHE");
+        words.add("ALFRED");
 
 
 
 
         char[][] dashboard = dg.build(words);
+
+        dg.print(dashboard);
 
     }
 }
