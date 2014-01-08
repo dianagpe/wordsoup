@@ -17,12 +17,33 @@ public class Principal {
         DashboardGen dg = DashboardGen.getInstance();
 
         List<String> words = new ArrayList<String>();
-        words.add("MURCIELAGO");
+      /*  words.add("MURCIELAGO");
         words.add("CABALLERO");
         words.add("BATIMOVIL");
         words.add("BRUCE");
         words.add("NOCHE");
         words.add("ALFRED");
+        words.add("NOVIA");
+        words.add("MUERTE");
+        words.add("NEGRO");
+        words.add("MANSION");
+        words.add("POZO");
+        words.add("JUSTICIA");     */
+
+        words.add("mordor");
+        words.add("aragorn");
+        words.add("legolas");
+        words.add("comarca");
+        words.add("gandalf");
+        words.add("precioso");
+        words.add("frodo");
+        words.add("gimly");
+        words.add("smeagle");
+        words.add("arathorn");
+        words.add("pippin");
+        words.add("orcos");
+
+
 
 
 

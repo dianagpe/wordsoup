@@ -1,5 +1,8 @@
 package com.dgvm.ws.helpers;
 
+import com.dgvm.ws.utils.LengthComparator;
+
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -55,10 +58,26 @@ public class DashboardGen {
         return ( angle + 1 ) >= 8 ? 0 : angle + 1;
     }
 
-    public void placeWord(char[][] darshboard, String word, int angle, int x, int y){
-        int ix = 0, iy = 0;
-
+    public Point getInc(int angle){
+        Point inc = new Point(0,0);
         switch (angle){
+            case 0: inc.y = -1; break;
+            case 1: inc.x = 1; inc.y = -1; break;
+            case 2: inc.x = 1; break;
+            case 3: inc.x = 1; inc.y = 1; break;
+            case 4: inc.y = 1; break;
+            case 5: inc.x = -1; inc.y = 1; break;
+            case 6: inc.x= -1; break;
+            case 7: inc.x = -1; inc.y = -1;
+        }
+        return inc;
+    }
+
+    public void placeWord(char[][] darshboard, String word, int angle, int x, int y){
+     //   int ix = 0, iy = 0;
+        Point inc = getInc(angle);
+
+     /*   switch (angle){
             case 0: iy = -1; break;
             case 1: ix = 1; iy = -1; break;
             case 2: ix = 1; break;
@@ -67,18 +86,19 @@ public class DashboardGen {
             case 5: ix = -1; iy = 1; break;
             case 6: ix= -1; break;
             case 7: ix = -1; iy = -1;
-        }
+        }  */
 
         for (char letter : word.toCharArray()){
             darshboard[y][x] = letter;
-            x += ix;
-            y += iy;
+            x += inc.x;
+            y += inc.y;
         }
     }
 
     public boolean checkPlace(char[][] darshboard, String word, int angle, int x, int y){
-        int ix = 0, iy = 0;
-
+      //  int ix = 0, iy = 0;
+        Point inc = getInc(angle);
+    /*
         switch (angle){
             case 0: iy = -1; break;
             case 1: ix = 1; iy = -1; break;
@@ -88,39 +108,38 @@ public class DashboardGen {
             case 5: ix = -1; iy = 1; break;
             case 6: ix= -1; break;
             case 7: ix = -1; iy = -1;
-        }
+        }   */
 
         for (char letter : word.toCharArray()){
             if(darshboard[y][x] != '-' &&  darshboard[y][x] != letter)
                 return false;
-            x += ix;
-            y += iy;
+            x += inc.x;
+            y += inc.y;
         }
         return true;
     }
 
 
     public char[][] build(List<String> words){
+
         char[][] dashboard = new char[W][H];
 
-
+        //inicializo la matriz
         for(int i = 0; i < W; i ++)
             for (int j = 0; j< H;j++)
                 dashboard[i][j]='-';
 
         Random r = new Random();
 
+        Collections.sort(words, Collections.reverseOrder(new LengthComparator()));
 
         int x = 0,y = 0;
-        String word = "AMARILLO";
+        String word = words.get(0);
 
         //obtener una dirección manecilla 0 2 4 6
         int angle = r.nextInt(4) * 2;
-
-
         // sacar un random en el rectangulo que se forma
-
-        int length = 8; // tamanio de la primera palabra
+        int length = word.length(); // tamanio de la primera palabra
 
         //primera vez
         switch(angle){
@@ -140,33 +159,24 @@ public class DashboardGen {
                 y = r.nextInt(H);
                 x = r.nextInt(W - length) + length;
                 break;
-
         }
 
-        //sacar un random entre 0 y el total menos length para el horizontal y para el vertical
-        System.out.println("angle "+angle+" x "+ x + "y "+y);
-
-        // ahora coloco la palabra
         placeWord(dashboard, word, angle, x, y);
-
 
         this.print(dashboard);
 
         //ahora sí a poner el resto de palabras
 
-
         angle = r.nextInt(8);
+        Point from, to;
 
-      //  word = "NARANJA";
-       // length = word.length();
+       // for(String word2 : words.subList(1, words.size())){
+        for(int k = 1 ; k < words.size() ;){
+            word = words.get(k);
 
-        angle = r.nextInt(8);
-
-        for(String word2 : words.subList(1, words.size())){
-
-            Point from = new Point(0, 0);
-            Point to = new Point(W, H);
-            length = word2.length();
+            from = new Point(0, 0);
+            to = new Point(W, H);
+            length = word.length();
 
             switch(angle){
                 case 0:
@@ -180,25 +190,22 @@ public class DashboardGen {
                 case 4:
                     to.y = H - length; break;
                 case 5:
-                    from.x = length - 1;
-                    to.y = H - length;
-                    break;
+                    from.x = length - 1; to.y = H - length; break;
                 case 6:
-                    from.x = length - 1;
-                    break;
+                    from.x = length - 1; break;
                 case 7:
-                    from.x = length - 1;
-                    from.y = length - 1;
-                    break;
+                    from.x = length - 1; from.y = length - 1; break;
             }
 
-            System.out.println("word:"+word2+" angle:"+angle+" from ("+from.x+", "+from.y+") to("+to.x+", "+to.y+")");
+            System.out.println("word:"+word+" angle:"+angle+" from ("+from.x+", "+from.y+") to("+to.x+", "+to.y+")");
             // ya que tengo los limites voy a recorrer
             boolean isPlace = false;
             for ( int j = from.y ; j < to.y && !isPlace; j++){
                 for(int i = from.x ; i < to.x && !isPlace ; i++ ){
-                    if(isPlace = checkPlace(dashboard, word2, angle, i, j))
-                        placeWord(dashboard, word2, angle, i, j);
+                    if(isPlace = checkPlace(dashboard, word, angle, i, j)) {
+                        placeWord(dashboard, word, angle, i, j);
+                        k++;
+                    }
 
 
                 }
@@ -206,6 +213,15 @@ public class DashboardGen {
             this.print(dashboard);
             angle = (angle == 7) ? 0 : angle+1;
         }
+
+        //rellenar guiones
+        for(int i = 0; i < W; i ++)
+            for (int j = 0; j< H;j++)
+                if(dashboard[i][j]=='-') dashboard[i][j] = (char)(r.nextInt(25)+97);
+
+      // int a = 'z';
+      //  System.out.println("--------"+a);
+
 
         return dashboard;
 
